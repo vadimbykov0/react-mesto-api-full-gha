@@ -1,9 +1,0 @@
-.authentication__fieldset {
-  height: 100%;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  border: none;
-  margin-top: 2px;
-}

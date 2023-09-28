@@ -1,9 +1,0 @@
-.authentication__form {
-  padding-top: 48px;
-}
-
-@media screen and (max-width: 520px) {
-  .authentication__form {
-    padding-top: 75px;
-  }
-}
