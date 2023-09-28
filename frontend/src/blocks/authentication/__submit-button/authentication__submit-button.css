@@ -1,0 +1,30 @@
+.authentication__submit-button {
+  margin: 186px 0 0;
+  padding: 0;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  width: 100%;
+  min-height: 50px;
+  background-color: #FFFFFF;
+  color: #000000;
+  border-radius: 2px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 22px;
+  text-align: center;
+}
+
+.authentication__submit-button:hover {
+  opacity: 0.85;
+}
+
+@media screen and (max-width: 520px) {
+  .authentication__submit-button {
+    margin-top: 15px;
+    font-size: 14px;
+    line-height: 17px;
+    min-height: 46px;
+  }
+}

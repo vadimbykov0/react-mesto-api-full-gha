@@ -1,0 +1,20 @@
+.element__reaction-button {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  align-self: center;
+  border: none;
+  background-color: transparent;
+  margin-right: 20px;
+  width: 22px;
+  height: 19px;
+  background-image: url(../../../images/heart.svg);
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.element__reaction-button:hover {
+  opacity: 0.5;
+}

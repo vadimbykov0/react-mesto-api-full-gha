@@ -1,0 +1,17 @@
+.authentication__container {
+  color: #FFFFFF;
+  width: 430px;
+  height: 100%;
+  padding: 34px 36px 37px;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 520px) {
+  .authentication__container {
+    margin-left: 19px;
+    margin-right: 19px;
+    padding: 25px 22px;
+    width: 100%;
+    min-height: 322px;
+  }
+}

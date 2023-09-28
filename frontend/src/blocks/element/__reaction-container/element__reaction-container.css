@@ -1,0 +1,10 @@
+.element__reaction-container {
+  grid-area: reaction;
+  display: flex;
+  gap: 3px;
+  align-items: flex-start;
+  flex-direction: column;
+  margin: 0;
+  margin-top: 23px;
+  padding: 0;
+}
