@@ -1,43 +1,52 @@
-const baseUrl = 'http://localhost:3000'
+class Auth {
+  constructor(config) {
+    this._url = config.baseUrl;
+    this._headers = config.headers;
+  };
 
-function getResponseData(res) {
-  return res.ok ? res.json() : Promise.reject(`${res.status} ${res.statusText}`)
-}
+  _getResponseData(res) {
+    if (!res.ok) {
+      return Promise.reject(`Ошибка: ${res.status}`);
+    } else {
+      return res.json();
+    }
+  };
 
-export function auth(password, email) {
-  return fetch(`${baseUrl}/signup`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      password: password,
-      email: email,
+  register(data) {
+    return fetch(`${this._url}/signup`, {
+      method: 'POST',
+      headers: this._headers,
+      body: JSON.stringify(data),
     })
-  })
-  .then(res => getResponseData(res))
-}
+    .then(this._getResponseData)
+  };
 
-export function authorization(password, email) {
-  return fetch(`${baseUrl}/signin`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      password: password,
-      email: email,
+  login(data) {
+    return fetch(`${this._url}/signin`, {
+      method: 'POST',
+      headers: this._headers,
+      body: JSON.stringify(data),
     })
-  })
-  .then(res => getResponseData(res))
+    .then(this._getResponseData)
+  };
+
+  checkToken(token) {
+    return fetch(`${this._url}/users/me`, {
+      method: 'GET',
+      headers: {
+        ...this._headers,
+        Authorization: `Bearer ${token}`,
+      }
+    })
+    .then(this._getResponseData)
+  };
 }
 
-export function getUserData(token) {
-  return fetch(`${baseUrl}/users/me`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      "Authorization" : `Bearer ${token}`
-    }})
-    .then(res => getResponseData(res))
+const auth = new Auth({
+  baseUrl: 'http://localhost:3000',
+  headers: {
+    'Content-Type': 'application/json'
   }
+});
+
+export default auth;
