@@ -183,16 +183,14 @@ function App() {
       })
   };
 
-  const handleRegister = (data) => {
-    auth.register(data)
-      .then((res) => {
-        if (res) {
+  const handleRegister = (password, email) => {
+    auth.register(password, email)
+      .then(res => {
           setIsInfoTooltipSuccess(true);
           navigate('/sign-in', { replace: true });
-        }
       })
       .catch((err) => {
-        console.log(`Ошибка регистрации ${err}`);
+        console.log(`Ошибка при регистрации ${err}`);
         setIsInfoTooltipSuccess(false);
       })
       .finally(() => {
@@ -200,20 +198,17 @@ function App() {
       })
   };
 
-  const handleLogin = (data) => {
-    auth.login(data)
-      .then((res) => {
-        if (res && res.token) {
-          setLoggedIn(true);
-          localStorage.setItem("jwt", res.token);
-          setAuthorizationUserEmail(data.email);
-          navigate('/', { replace: true });
-        }
+  const handleLogin = (password, email) => {
+    auth.login(password, email)
+      .then(res => {
+        localStorage.setItem("jwt", res.token);
+        setLoggedIn(true);
+        navigate('/', { replace: true });
       })
       .catch((err) => {
         setIsInfoTooltipSuccess(false);
         setIsInfoTooltipPopupOpen(true);
-        console.log(`Ошибка входа ${err}`);
+        console.log(`Ошибка при авторизации ${err}`);
       })
   };
 

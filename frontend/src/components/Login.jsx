@@ -6,7 +6,7 @@ export default function Login({ onLogin }) {
 
   function handleSubmit(evt) {
     evt.preventDefault();
-    onLogin(values);
+    onLogin(values.password, values.email);
     reset();
   };
 
