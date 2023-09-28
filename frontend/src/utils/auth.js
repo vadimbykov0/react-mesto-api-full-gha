@@ -1,4 +1,4 @@
-const baseUrl = 'https://api.mesto-66.fil.nomoreparties.co'
+const baseUrl = 'http://localhost:3000'
 
 function getResponseData(res) {
   return res.ok ? res.json() : Promise.reject(`${res.status} ${res.statusText}`)

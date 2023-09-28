@@ -101,7 +101,7 @@ class Api {
 /*создаю экземпляр класса Api*/
 
 const api = new Api({
-  baseUrl: 'https://api.mesto-66.fil.nomoreparties.co',
+  baseUrl: 'http://localhost:3000',
 });
 
 export default api
