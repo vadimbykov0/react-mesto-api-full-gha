@@ -49,7 +49,7 @@ class Auth {
 }
 
 const auth = new Auth({
-  baseUrl: 'http://localhost:3000',
+  baseUrl: 'https://api.mesto.vadimbykov.nomoredomainsrocks.ru',
   headers: {
     'Content-Type': 'application/json'
   }
