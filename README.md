@@ -6,12 +6,15 @@
 Репозиторий для приложения проекта Mesto, включающий фронтенд и бэкенд части приложения со следующими возможностями: авторизации и регистрации пользователей, операции с карточками и пользователями.
 Бэкенд расположен в директории `backend/`, а фронтенд - в `frontend/`.
 
-Адрес репозитория: https://github.com/...
-
 ### Ссылки на проект
 
-IP-адрес x.x.x.x
+IP-адрес 158.160.71.248
 
-Frontend https://...
+Frontend https://mesto.vadimbykov.nomoredomainsrocks.ru
 
-Backend https://...
+Backend https://api.mesto.vadimbykov.nomoredomainsrocks.ru
+
+Адрес репозитория: https://github.com/vadimbykov0/react-mesto-api-full-gha
+
+### Чеклист:
+* [Чеклист 15 спринта курса](https://code.s3.yandex.net/web-developer/checklists-pdf/new-program/checklist_15.pdf)
