@@ -1,6 +1,7 @@
 class Api {
   constructor(config) {
     this._url = config.baseUrl;
+    this._headers = config.headers;
   }
 
   _getResponseData(res) {
@@ -16,7 +17,7 @@ class Api {
     return fetch(`${this._url}/users/me/avatar`, {
       method: 'PATCH',
       headers: {
-        'Content-Type': 'application/json',
+        ...this._headers,
         Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({
@@ -30,6 +31,7 @@ class Api {
   getUserInfo(token) {
     return fetch(`${this._url}/users/me`, {
       headers: {
+        ...this._headers,
         Authorization: `Bearer ${token}`
       }
     })
@@ -41,6 +43,7 @@ class Api {
     return fetch(`${this._url}/cards`, {
       method: 'GET',
       headers: {
+        ...this._headers,
         Authorization: `Bearer ${token}`
       }
     })
@@ -52,12 +55,12 @@ class Api {
     return fetch(`${this._url}/users/me`, {
       method: 'PATCH',
       headers: {
-        'Content-Type': 'application/json',
+        ...this._headers,
         Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({
         name: data.name,
-        about: data.about,
+        about: data.about
       })
     })
     .then(this._getResponseData)
@@ -68,7 +71,7 @@ class Api {
     return fetch(`${this._url}/cards`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        ...this._headers,
         Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({
@@ -84,6 +87,7 @@ class Api {
     return fetch(`${this._url}/cards/${cardId}`, {
       method: 'DELETE',
       headers: {
+        ...this._headers,
         Authorization: `Bearer ${token}`
       }
     })
@@ -95,6 +99,7 @@ class Api {
     return fetch(`${this._url}/cards/${id}/likes`, {
       method: 'PUT',
       headers: {
+        ...this._headers,
         Authorization: `Bearer ${token}`
       }
     })
@@ -105,6 +110,7 @@ class Api {
     return fetch(`${this._url}/cards/${id}/likes`, {
       method: 'DELETE',
       headers: {
+        ...this._headers,
         Authorization: `Bearer ${token}`
       }
     })
@@ -114,6 +120,9 @@ class Api {
 
 const api = new Api({
   baseUrl: 'https://api.mesto.vadimbykov.nomoredomainsrocks.ru',
+  headers: {
+    'Content-Type': 'application/json'
+  }
 });
 
 export default api;

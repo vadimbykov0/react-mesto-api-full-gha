@@ -1,6 +1,7 @@
 class Auth {
   constructor(config) {
     this._url = config.baseUrl;
+    this._headers = config.headers;
   };
 
   _getResponseData(res) {
@@ -14,10 +15,7 @@ class Auth {
   register(password, email) {
     return fetch(`${this._url}/signup`, {
       method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers: this._headers,
       body: JSON.stringify({
         password: password,
         email: email
@@ -29,10 +27,7 @@ class Auth {
   login(password, email) {
     return fetch(`${this._url}/signin`, {
       method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers: this._headers,
       body: JSON.stringify({
         password: password,
         email: email,
@@ -45,8 +40,7 @@ class Auth {
     return fetch(`${this._url}/users/me`, {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
+        ...this._headers,
         Authorization: `Bearer ${token}`,
       }
     })
@@ -56,6 +50,9 @@ class Auth {
 
 const auth = new Auth({
   baseUrl: 'https://api.mesto.vadimbykov.nomoredomainsrocks.ru',
+  headers: {
+    'Content-Type': 'application/json'
+  }
 });
 
 export default auth;
