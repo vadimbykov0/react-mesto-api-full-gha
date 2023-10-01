@@ -68,7 +68,7 @@ function App() {
 
   useEffect(() => {
     checkToken();
-  }, [checkToken]);
+  }, [navigate]);
 
   useEffect(() => {
     if (loggedIn) {
