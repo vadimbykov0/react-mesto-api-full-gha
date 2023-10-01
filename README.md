@@ -8,7 +8,7 @@
 
 ### Ссылки на проект
 
-IP-адрес 158.160.71.248
+IP 158.160.71.248
 
 Frontend https://mesto.vadimbykov.nomoredomainsrocks.ru
 

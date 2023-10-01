@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 
-// const { JWT_SECRET } = process.env;
+const { JWT_SECRET } = process.env;
 const jwt = require('jsonwebtoken');
 
 const SALT_ROUNDS = 10;
@@ -113,7 +113,7 @@ module.exports = {
     const { email, password } = req.body;
     return User.findUserByCredentials(email, password)
       .then((user) => {
-        const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+        const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
         res.send({ token });
       })
       .catch((err) => {
