@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Route, Routes, useNavigate, Navigate } from "react-router-dom";
 
-import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
 
@@ -19,7 +18,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import CurrentUserContext from "../contexts/CurrentUserContext";
 
 import api from "../utils/api";
-import auth from "../utils/auth";
+import { register, authorize, getContent } from "../utils/auth";
 
 function App() {
   const navigate = useNavigate();
@@ -37,7 +36,6 @@ function App() {
 
   const [currentUser, setCurrentUser] = useState({});
 
-  const [token, setToken] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
   const [authorizationUserEmail, setAuthorizationUserEmail] = useState('');
   const [isInfoTooltipSuccess, setIsInfoTooltipSuccess] = useState(false);
@@ -46,176 +44,6 @@ function App() {
   const [isLoadingAddPlacePopup, setIsLoadingAddPlacePopup] = useState(false);
   const [isLoadingEditAvatarPopup, setIsLoadingEditAvatarPopup] = useState(false);
   const [isLoadingDeletePopupOpen, setIsLoadingDeletePopupOpen] = useState(false);
-
-  const checkToken = useCallback(
-    () => {
-      const token = localStorage.getItem("jwt");
-      if (token) {
-        setToken(token);
-        auth.checkToken(token)
-          .then(res => {
-            setLoggedIn(true);
-            setAuthorizationUserEmail(res.email);
-            navigate('/', { replace: true });
-            })
-          .catch((err) => {
-            console.log(`Ошибка проверки токена ${err}`);
-          })
-      }
-    },
-    [navigate]
-  );
-
-  useEffect(() => {
-    checkToken();
-  }, [navigate]);
-
-  useEffect(() => {
-    if (loggedIn) {
-      const token = localStorage.getItem('jwt');
-      Promise.all([
-        api.getUserInfo(token),
-        api.getCards(token)
-      ])
-        .then((res) => {
-          const [dataUser, dataCards] = res;
-          setCurrentUser(dataUser);
-          setCards(dataCards);
-        })
-        .catch((err) => {
-          console.log(`Ошибка получения данных пользователя и карточек мест ${err}`);
-        })
-    }
-  }, [loggedIn]);
-
-  const handleUpdateUser = (dataUser, reset) => {
-    setIsLoadingEditProfilePopup(true);
-
-    api.changeUserInfo(dataUser, token)
-      .then((res) => {
-        setCurrentUser(res);
-        closeAllPopups();
-        reset();
-      })
-      .catch((err) => {
-        console.log(`Ошибка при редактировании данных пользователя ${err}`)
-      })
-      .finally(() => {
-        setIsLoadingEditProfilePopup(false);
-      })
-  };
-
-  const handleUpdateAvatar = (dataUser, reset) => {
-    setIsLoadingEditAvatarPopup(true);
-
-    api.setUserAvatar(dataUser, token)
-      .then((res) => {
-        setCurrentUser(res);
-        closeAllPopups();
-        reset();
-      })
-      .catch((err) => {
-        console.log(`Ошибка при редактировании аватара ${err}`)
-      })
-      .finally(() => {
-        setIsLoadingEditAvatarPopup(false);
-      })
-  };
-
-  const handleCardLike = (card) => {
-    const isLiked = card.likes.some((i) => i._id === currentUser._id);
-    
-    if (isLiked) {
-      api.deleteLike(card._id, localStorage.jwt)
-        .then((newCard) => {
-          setCards((state) =>
-            state.map((c) => (c._id === card._id ? newCard : c))
-          );
-        })
-        .catch((err) => {
-          console.log(`Ошибка удаления лайка ${err}`);
-        });
-    } else {
-      api.setLike(card._id, localStorage.jwt)
-        .then((newCard) => {
-          setCards((state) =>
-            state.map((c) => (c._id === card._id ? newCard : c))
-          );
-        })
-        .catch((err) => {
-          console.log(`Ошибка добавления лайка ${err}`);
-        });
-    }
-  };
-
-  const handleCardDelete = () => {
-    setIsLoadingDeletePopupOpen(true);
-
-    api.deleteCard(cardForDelete._id, token)
-      .then(() => {
-        setCards(cards.filter((item) => item !== cardForDelete));
-        closeAllPopups();
-      })
-      .catch((err) => {
-        console.log(`Ошибка при удалении карточки места ${err}`)
-      })
-      .finally(() => {
-        setIsLoadingDeletePopupOpen(false);
-      })
-  };
-
-  const handleAddPlaceSubmit = (dataCard, reset) => {
-    setIsLoadingAddPlacePopup(true);
-
-    api.addNewCard(dataCard, token)
-      .then((res) => {
-        setCards([res, ...cards]);
-        closeAllPopups();
-        reset();
-      })
-      .catch((err) => {
-        console.log(`Ошибка при добавлении карточки места ${err}`)
-      })
-      .finally(() => {
-        setIsLoadingAddPlacePopup(false);
-      })
-  };
-
-  const handleRegister = (password, email) => {
-    auth.register(password, email)
-      .then(res => {
-          setIsInfoTooltipSuccess(true);
-          navigate('/sign-in', { replace: true });
-      })
-      .catch((err) => {
-        console.log(`Ошибка при регистрации ${err}`);
-        setIsInfoTooltipSuccess(false);
-      })
-      .finally(() => {
-        setIsInfoTooltipPopupOpen(true)
-      })
-  };
-
-  const handleLogin = (password, email) => {
-    auth.login(password, email)
-      .then(res => {
-        localStorage.setItem("jwt", res.token);
-        setLoggedIn(true);
-        navigate('/', { replace: true });
-      })
-      .catch((err) => {
-        setIsInfoTooltipSuccess(false);
-        setIsInfoTooltipPopupOpen(true);
-        console.log(`Ошибка при авторизации ${err}`);
-      })
-  };
-
-  const signOut = () => {
-    setLoggedIn(false);
-    localStorage.removeItem('jwt');
-    setToken('');
-    navigate('/sign-in');
-  };
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
@@ -229,17 +57,6 @@ function App() {
     setIsEditAvatarPopupOpen(true);
   };
 
-
-  function closeAllPopups() {
-    setIsEditProfilePopupOpen(false);
-    setIsAddPlacePopupOpen(false);
-    setIsEditAvatarPopupOpen(false);
-    setDeletePopupOpen(false);
-    setImagePopupOpen(false);
-    setIsInfoTooltipPopupOpen(false);
-    setSelectedCard({});
-  };
-
   function handleCardClick(card) {
     setSelectedCard(card);
     setImagePopupOpen(true);
@@ -250,15 +67,184 @@ function App() {
     setDeletePopupOpen(true);
   };
 
+  const closeAllPopups = useCallback(() => {
+    setIsEditProfilePopupOpen(false);
+    setIsAddPlacePopupOpen(false);
+    setIsEditAvatarPopupOpen(false);
+    setDeletePopupOpen(false);
+    setImagePopupOpen(false);
+    setIsInfoTooltipPopupOpen(false);
+    setSelectedCard({});
+  }, []);
+
+  useEffect(() => {
+    if (loggedIn) {
+      Promise.all([
+        api.getUser(localStorage.jwt),
+        api.getCards(localStorage.jwt),
+      ])
+      .then(([userData, cardsData]) => {
+          setCurrentUser(userData);
+          setCards(cardsData);
+        })
+        .catch((err) => {
+          console.log(`Ошибка получения данных пользователя и карточек мест ${err}`);
+        })
+    }
+  }, [loggedIn]);
+
+  function handleUpdateUser({ name, about }, reset) {
+    setIsLoadingEditProfilePopup(true);
+    api.updateProfileInfo(name, about, localStorage.jwt)
+      .then((data) => {
+        setCurrentUser(data);
+        closeAllPopups();
+        reset();
+      })
+      .catch((err) => {
+        console.log(`Ошибка при редактировании данных пользователя ${err}`)
+      })
+      .finally(() => {
+        setIsLoadingEditProfilePopup(false);
+      })
+  };
+
+  function handleCardDelete() {
+    setIsLoadingDeletePopupOpen(true);
+    api.deleteCard(cardForDelete._id, localStorage.jwt)
+      .then(() => {
+        setCards(cards.filter((item) => item !== cardForDelete));
+        closeAllPopups();
+      })
+      .catch((err) => {
+        console.log(`Ошибка при удалении карточки места ${err}`)
+      })
+      .finally(() => {
+        setIsLoadingDeletePopupOpen(false);
+      })
+  };
+
+  function handleUpdateAvatar({ avatar }, reset) {
+    setIsLoadingEditAvatarPopup(true);
+    api.updateAvatar(avatar, localStorage.jwt)
+      .then((data) => {
+        setCurrentUser(data);
+        closeAllPopups();
+        reset();
+      })
+      .catch((err) => {
+        console.log(`Ошибка при редактировании аватара ${err}`)
+      })
+      .finally(() => {
+        setIsLoadingEditAvatarPopup(false);
+      })
+  };
+
+  function handleAddPlaceSubmit({ name, link }, reset) {
+    setIsLoadingAddPlacePopup(true);
+    api.addNewCard(name, link, localStorage.jwt)
+      .then((card) => {
+        setCards([card, ...cards]);
+        closeAllPopups();
+        reset();
+      })
+      .catch((err) => {
+        console.log(`Ошибка при добавлении карточки места ${err}`)
+      })
+      .finally(() => {
+        setIsLoadingAddPlacePopup(false);
+      })
+  };
+
+  function handleCardLike(card) {
+    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+    
+    if (isLiked) {
+      api.deleteLike(card._id, localStorage.jwt)
+        .then((newCard) => {
+          setCards((state) =>
+            state.map((c) => (c._id === card._id ? newCard : c))
+          );
+        })
+        .catch((err) => {
+          console.log(`Ошибка удаления лайка ${err}`);
+        });
+    } else {
+      api.addLike(card._id, localStorage.jwt)
+        .then((newCard) => {
+          setCards((state) =>
+            state.map((c) => (c._id === card._id ? newCard : c))
+          );
+        })
+        .catch((err) => {
+          console.log(`Ошибка добавления лайка ${err}`);
+        });
+    }
+  };
+
+  useEffect(() => {
+    checkToken();
+  }, [navigate]);
+
+  const checkToken = () => {
+    if (localStorage.getItem("jwt")) {
+      const jwt = localStorage.getItem('jwt');
+      if (jwt) {
+        getContent(jwt)
+          .then((res) => {
+            if (res) {
+              setLoggedIn(true);
+              setAuthorizationUserEmail(res.data.email);
+              navigate('/', { replace: true });
+            }
+          })
+          .catch((err) => {
+            console.log(`Ошибка проверки токена ${err}`);
+          });
+        }
+      }
+  };
+
+  function handleRegister(email, password) {
+    register(email, password)
+      .then((data) => {
+        if (data) {
+          setIsInfoTooltipSuccess(true);
+          navigate('/sign-in', { replace: true });
+        }
+      })
+      .catch((err) => {
+        console.log(`Ошибка при регистрации ${err}`);
+        setIsInfoTooltipSuccess(false);
+      })
+      .finally(() => setIsInfoTooltipPopupOpen(true));
+  };
+
+  function handleLogin(email, password) {
+    authorize(email, password)
+      .then((data) => {
+        if (data && data.token) {
+          localStorage.setItem("jwt", data.token);
+          setLoggedIn(true);
+          setAuthorizationUserEmail(email);
+          navigate('/', { replace: true });
+        } 
+      })
+      .catch((err) => {
+        setIsInfoTooltipSuccess(false);
+        setIsInfoTooltipPopupOpen(true);
+        console.log(`Ошибка при авторизации ${err}`);
+      })
+  };
+
+  function signOut() {
+    setLoggedIn(false);
+    localStorage.removeItem('jwt');
+  };
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header
-          loggedIn={loggedIn}
-          signOut={signOut}
-          email={authorizationUserEmail}
-        />
-
         <Routes>
           <Route
             path="/"
@@ -273,6 +259,8 @@ function App() {
                 loggedIn={loggedIn}
                 element={Main}
                 cards={cards}
+                signOut={signOut}
+                email={authorizationUserEmail}
               />
             }
           />

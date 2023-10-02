@@ -1,58 +1,51 @@
-class Auth {
-  constructor(config) {
-    this._url = config.baseUrl;
-    this._headers = config.headers;
-  };
+const baseUrl = 'https://api.mesto.vadimbykov.nomoredomainsrocks.ru';
 
-  _getResponseData(res) {
-    if (!res.ok) {
-      return Promise.reject(`Error: ${res.status} ${res.statusText}`);
-    } else {
+function checkResponse(res) {
+  if (res.ok) {
       return res.json();
-    }
-  };
-
-  register(password, email) {
-    return fetch(`${this._url}/signup`, {
-      method: 'POST',
-      headers: this._headers,
-      body: JSON.stringify({
-        password: password,
-        email: email
-      }),
-    })
-    .then(this._getResponseData)
-  };
-
-  login(password, email) {
-    return fetch(`${this._url}/signin`, {
-      method: 'POST',
-      headers: this._headers,
-      body: JSON.stringify({
-        password: password,
-        email: email,
-      }),
-    })
-    .then(this._getResponseData)
-  };
-
-  checkToken(token) {
-    return fetch(`${this._url}/users/me`, {
-      method: 'GET',
-      headers: {
-        ...this._headers,
-        Authorization: `Bearer ${token}`,
-      }
-    })
-    .then(this._getResponseData)
-  };
-}
-
-const auth = new Auth({
-  baseUrl: 'https://api.mesto.vadimbykov.nomoredomainsrocks.ru',
-  headers: {
-    'Content-Type': 'application/json'
+  } else {
+      return Promise.reject(`Ошибка: ${res.status} ${res.statusText}`);
   }
-});
+};
 
-export default auth;
+export const register = (email, password) => {
+  return fetch(`${baseUrl}/signup`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email,
+      password,
+    }),
+  })
+  .then(checkResponse)
+};
+
+export const authorize = (email, password) => {
+  return fetch(`${baseUrl}/signin`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email,
+      password,
+    }),
+  })
+  .then(checkResponse)
+};
+
+export const getContent = (token) => {
+  return fetch(`${baseUrl}/users/me`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      "Authorization" : `Bearer ${token}`,
+    },
+  })
+  .then(checkResponse)
+};

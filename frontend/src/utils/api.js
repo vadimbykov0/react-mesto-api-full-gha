@@ -1,128 +1,113 @@
 class Api {
-  constructor(config) {
-    this._url = config.baseUrl;
-    this._headers = config.headers;
+  constructor({ url }) {
+      this._url = url;
   }
 
-  _getResponseData(res) {
-    if (!res.ok) {
-      return Promise.reject(`Error: ${res.status} ${res.statusText}`);
-    } else {
+  _checkResponse(res) {
+    if (res.ok) {
       return res.json();
+    } else {
+      return Promise.reject(`Ошибка: ${res.status} ${res.statusText}`);
     }
   };
 
-  // Обновление аватара пользователя
-  setUserAvatar(data, token) {
-    return fetch(`${this._url}/users/me/avatar`, {
-      method: 'PATCH',
-      headers: {
-        ...this._headers,
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        avatar: data.avatar
-      })
-    })
-    .then(this._getResponseData)
-  };
-
-  // Загрузка информации о пользователе с сервера
-  getUserInfo(token) {
-    return fetch(`${this._url}/users/me`, {
-      headers: {
-        ...this._headers,
-        Authorization: `Bearer ${token}`
-      }
-    })
-    .then(this._getResponseData)
-  };
-
-  // Загрузка карточек с сервера
   getCards(token) {
     return fetch(`${this._url}/cards`, {
       method: 'GET',
       headers: {
-        ...this._headers,
-        Authorization: `Bearer ${token}`
-      }
+        "Authorization" : `Bearer ${token}`,
+      },
     })
-    .then(this._getResponseData)
+    .then(this._checkResponse);
   };
 
-  // Изменение данных профиля
-  changeUserInfo(data, token) {
+  getUser(token) {
     return fetch(`${this._url}/users/me`, {
-      method: 'PATCH',
+      method: 'GET',
       headers: {
-        ...this._headers,
-        Authorization: `Bearer ${token}`
+        "Authorization" : `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        name: data.name,
-        about: data.about
-      })
     })
-    .then(this._getResponseData)
-  }
+    .then(this._checkResponse);
+  };
 
-  // Добавление новой карточки
-  addNewCard(data, token) {
+  addCard(name, link, token) {
     return fetch(`${this._url}/cards`, {
       method: 'POST',
       headers: {
-        ...this._headers,
-        Authorization: `Bearer ${token}`
+        'Content-Type': 'application/json',
+        "Authorization" : `Bearer ${token}`
       },
       body: JSON.stringify({
-        name: data.title,
-        link: data.link
-      })
+        name,
+        link,
+      }),
     })
-    .then(this._getResponseData)
+    .then(this._checkResponse);
   };
 
-  // Удаление карточки
   deleteCard(cardId, token) {
     return fetch(`${this._url}/cards/${cardId}`, {
       method: 'DELETE',
       headers: {
-        ...this._headers,
-        Authorization: `Bearer ${token}`
-      }
+        "Authorization" : `Bearer ${token}`,
+      },
     })
-    .then(this._getResponseData)
+    .then(this._checkResponse);
   };
 
-  // Установка и снятие лайка
-  setLike(id, token) {
-    return fetch(`${this._url}/cards/${id}/likes`, {
+  updateProfileInfo(name, about, token) {
+    return fetch(`${this._url}/users/me`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization" : `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        name: name,
+        about: about,
+      }),
+    })
+    .then(this._checkResponse);
+  };
+
+  addLike(cardId, token) {
+    return fetch(`${this._url}/cards/${cardId}/likes`, {
       method: 'PUT',
       headers: {
-        ...this._headers,
-        Authorization: `Bearer ${token}`
-      }
+        "Authorization" : `Bearer ${token}`,
+      },
     })
-    .then(this._getResponseData)
+    .then(this._checkResponse);
   };
 
-  deleteLike(id, token) {
-    return fetch(`${this._url}/cards/${id}/likes`, {
+  deleteLike(cardId, token) {
+    return fetch(`${this._url}/cards/${cardId}/likes`, {
       method: 'DELETE',
       headers: {
-        ...this._headers,
-        Authorization: `Bearer ${token}`
-      }
+        "Authorization" : `Bearer ${token}`,
+      },
     })
-    .then(this._getResponseData)
+    .then(this._checkResponse);
+  };
+
+  updateAvatar(data, token) {
+    return fetch(`${this._url}/users/me/avatar`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization" : `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        avatar: data,
+      }),
+    })
+    .then(this._checkResponse);
   };
 }
 
 const api = new Api({
   baseUrl: 'https://api.mesto.vadimbykov.nomoredomainsrocks.ru',
-  headers: {
-    'Content-Type': 'application/json'
-  }
 });
 
 export default api;
