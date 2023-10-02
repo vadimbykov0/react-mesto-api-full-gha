@@ -2,7 +2,7 @@ import React from "react";
 import logo from "../images/logo.svg";
 import { Routes, Route, Link, useLocation } from "react-router-dom";
 
-export default function Header({ loggedIn, email, signOut }) {
+export default function Header({ loggedIn, email, logOut }) {
   const location = useLocation();
   const linkText = location.pathname === "/sign-in" ? "Регистрация" : "Войти";
   const buttonText = loggedIn ? "Выйти" : linkText;
@@ -36,7 +36,7 @@ export default function Header({ loggedIn, email, signOut }) {
                 </p>
                 <button
                   className="header__link header__button"
-                  onClick={signOut}
+                  onClick={logOut}
                 >
                   {buttonText}
                 </button>

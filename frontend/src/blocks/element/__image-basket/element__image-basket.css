@@ -1,20 +1,15 @@
 .element__image-basket {
-    width: 18px;
-    height: 19px;
-    background-image: url(../../../images/trash-icon.svg);
-    background-color: transparent;
-    background-position: center;
-    background-repeat: no-repeat;
-    border: none;
-    cursor: pointer;
-    outline: none;
-    padding: 0;
-    margin: 0;
-    transition: opacity .5s ease;
-    position: absolute;
-    top: 20px;
-    right: 20px;
+  width: 18px;
+  height: 19px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+  background: url('../../../images/trash-icon.svg') center center/contain no-repeat;
+  transition: opacity .6s;
 }
 .element__image-basket:hover {
-  opacity: 0.6;
-}
+    opacity: .6;
+  }

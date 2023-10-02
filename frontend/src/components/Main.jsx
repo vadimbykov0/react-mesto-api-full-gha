@@ -1,8 +1,7 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
 
 import Card from "./Card";
 import CurrentUserContext from "../contexts/CurrentUserContext";
-import Header from './Header';
 
 export default function Main({
   onEditAvatar,
@@ -11,21 +10,12 @@ export default function Main({
   onCardClick,
   onCardDelete,
   cards,
-  onCardLike,
-  signOut,
-  loggedIn,
-  authorizationUserEmail,
+  onCardLike
 }) {
   const currentUser = useContext(CurrentUserContext);
 
   return (
-    <>
-      <Header
-        onClick={signOut}
-        loggedIn={loggedIn}
-        email={authorizationUserEmail}
-      />
-      <main className="content">
+    <main className="content">
       <section
         className="profile"
         aria-label="Профиль"
@@ -58,11 +48,11 @@ export default function Main({
         className="elements"
         aria-label="Карточки мест"
       >
-        {cards.map((card) => {
+        {cards.map((data) => {
           return (
-            <div className="element" key={card._id}>
+            <div className="element" key={data._id}>
               <Card
-                card={card}
+                card={data}
                 onCardLike={onCardLike}
                 onCardClick={onCardClick}
                 onCardDelete={onCardDelete}
@@ -72,6 +62,5 @@ export default function Main({
         })}
       </section>
     </main>
-    </>
   );
 }
