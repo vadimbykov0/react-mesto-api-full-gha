@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Route, Routes, useNavigate, Navigate } from "react-router-dom";
 
 import Header from "./Header";
@@ -130,31 +130,22 @@ function App() {
     setDeletePopupOpen(true);
   };
 
-  function handleCardLike(card) {
-    const isLiked = card.likes.some((i) => i._id === currentUser._id);
-    
-    if (isLiked) {
+  const handleCardLike = useCallback((card) => {
+    const isLike = card.likes.some(element => currentUser._id === element)
+    if (isLike) {
       api.deleteLike(card._id, localStorage.jwt)
-        .then((newCard) => {
-          setCards((state) =>
-            state.map((c) => (c._id === card._id ? newCard : c))
-          );
+        .then(res => {
+          setCards(cards => cards.map((item) => item._id === card._id ? res : item))
         })
-        .catch((err) => {
-          console.log(`Ошибка удаления лайка ${err}`);
-        });
+        .catch((err) => console.error(`Ошибка при снятии лайка ${err}`))
     } else {
       api.addLike(card._id, localStorage.jwt)
-        .then((newCard) => {
-          setCards((state) =>
-            state.map((c) => (c._id === card._id ? newCard : c))
-          );
+        .then(res => {
+          setCards(cards => cards.map((item) => item._id === card._id ? res : item))
         })
-        .catch((err) => {
-          console.log(`Ошибка добавления лайка ${err}`);
-        });
+        .catch((err) => console.error(`Ошибка при установке лайка ${err}`))
     }
-  };
+  }, [currentUser._id])
 
   function handleCardDelete() {
     setIsLoadingDeletePopupOpen(true);
