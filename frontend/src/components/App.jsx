@@ -151,7 +151,7 @@ function App() {
     setIsLoadingDeletePopupOpen(true);
     api.deleteCard(cardForDelete._id, localStorage.jwt)
       .then(() => {
-        setCards(cards.filter((item) => item !== cardForDelete));
+        setCards(cards.filter((item) => item._id !== cardForDelete._id));
         closeAllPopups();
       })
       .catch((err) => {
@@ -175,7 +175,7 @@ function App() {
         console.log(`Ошибка при редактировании данных пользователя ${err}`)
       })
       .finally(() => setIsLoadingEditProfilePopup(false))
-  };
+  }
 
   function handleUpdateAvatar(dataUser, reset) {
     setIsLoadingEditAvatarPopup(true);
@@ -196,7 +196,7 @@ function App() {
     setIsLoadingAddPlacePopup(true);
     api.addNewCard(dataCard, localStorage.jwt)
       .then((res) => {
-        setCards([res, ...cards]);
+        setCards([{...res, owner: res.owner._id}, ...cards]);
         closeAllPopups();
         reset();
         setIsLoadingAddPlacePopup(false);
