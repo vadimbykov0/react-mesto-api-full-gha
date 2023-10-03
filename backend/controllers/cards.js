@@ -8,7 +8,6 @@ module.exports = {
   getCards(req, res, next) {
     Card.find({})
       .sort({ createdAt: -1 })
-      .populate(['owner', 'likes'])
       .then((cards) => res.send(cards))
       .catch(next);
   },
@@ -68,7 +67,6 @@ module.exports = {
       { new: true },
     )
       .orFail()
-      .populate(['owner', 'likes'])
       .then((card) => {
         res.send(card);
       })
@@ -91,7 +89,6 @@ module.exports = {
       { new: true },
     )
       .orFail()
-      .populate(['owner', 'likes'])
       .then((card) => {
         res.send(card);
       })

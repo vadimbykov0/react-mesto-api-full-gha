@@ -125,8 +125,8 @@ function App() {
     setImagePopup(true);
   };
 
-  function handleDeleteClick(cardId) {
-    setCardForDelete(cardId);
+  function handleDeleteClick(card) {
+    setCardForDelete(card);
     setDeletePopupOpen(true);
   };
 
@@ -169,7 +169,7 @@ function App() {
       .finally(() => {
         setIsLoadingDeletePopupOpen(false);
       })
-  };
+  }
 
   function handleUpdateUser(dataUser, reset) {
     setIsLoadingEditProfilePopup(true);
@@ -323,7 +323,7 @@ function App() {
           isOpen={isDeletePopupOpen}
           onClose={closeAllPopups}
           onDeleteCardConfirm={handleCardDelete}
-          cardId={cardForDelete}
+          card={cardForDelete}
           isSending={isLoadingDeletePopupOpen}
         />
 
